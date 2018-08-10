@@ -89,6 +89,10 @@
             <a class="update-pw" @click="updateTenantData">更新租客数据</a>
         </div>
         <a class="console-btn" @click="consoleLogDBHouse">控制台打印所有数据</a>
+
+        <a class="update-pw fast-fill" @click="fastFillReceipt">快速填写收据</a>
+        <fillHydropowerReads ref="fillHydropowerReads" @makeReceipts="makeReceipts"></fillHydropowerReads>
+        <receiptView ref="receipts"></receiptView>
     </div>
 </template>
 
@@ -96,6 +100,8 @@
 import tenant from '../../assets/js/tenantInfo'
 import currency from '../../assets/js/convertCurrency'
 import myIDB from '../../assets/js/indexedDB'
+import fillHydropowerReads from './fill-hydropower-reads'
+import receiptView from './all-receipts'
 
 
 var countTotal = function(a,b,c,d,e) {
@@ -113,6 +119,7 @@ var year = currentDate.getFullYear().toString().substring(2,4);
 
 export default {
   name: 'redirect-page',
+  components:{ fillHydropowerReads, receiptView },
   data () {
     return {
       roomNum: '', //输入的房号
@@ -322,6 +329,12 @@ export default {
             }
         });
     },
+    fastFillReceipt() {
+        this.$refs.fillHydropowerReads.$emit('show')
+    },
+    makeReceipts(data) {
+	    this.$refs.receipts.$emit('showReceipts',{data})
+    },
   },
     directives: {
         focus: {
@@ -452,6 +465,11 @@ export default {
         left: 20px;
         text-decoration: underline;
         color: #2d78f4;
+    }
+    .fast-fill {
+        position: absolute;
+        top: 10px;
+        left: 10px;
     }
 
 </style>
