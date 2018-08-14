@@ -12,14 +12,14 @@
                             <Row type="flex" class="user-infor">
                                 <Col span="8">
                                     <Row class-name="made-child-con-middle" type="flex" align="middle">
-                                        <img class="avator-img" :src="avatorPath" />
+                                        <img class="avator-img" :src="require('../../assets/images/weiwei.png')" />
                                     </Row>
                                 </Col>
                                 <Col span="16" style="padding-left:6px;">
                                     <Row class-name="made-child-con-middle" type="flex" align="middle">
                                         <div>
-                                            <b class="card-user-infor-name">Admin</b>
-                                            <p>super admin</p>
+                                            <b class="card-user-infor-name">微微小筑</b>
+                                            <p>小筑大管家</p>
                                         </div>
                                     </Row>
                                 </Col>
@@ -31,7 +31,7 @@
                             </Row>
                             <Row class="margin-top-8">
                                 <Col span="8"><p class="notwrap">上次登录地点:</p></Col>
-                                <Col span="16" class="padding-left-8">北京</Col>
+                                <Col span="16" class="padding-left-8">大广州</Col>
                             </Row>
                         </Card>
                     </Col>
@@ -161,7 +161,7 @@
                 </Card>
             </Col>
         </Row>
-        <Row class="margin-top-10">
+        <!--<Row class="margin-top-10">
             <Card>
                 <p slot="title" class="card-title">
                     <Icon type="ios-shuffle-strong"></Icon>
@@ -171,7 +171,7 @@
                     <service-requests></service-requests>
                 </div>
             </Card>
-        </Row>
+        </Row>-->
     </div>
 </template>
 
@@ -186,6 +186,8 @@ import countUp from './components/countUp.vue';
 import inforCard from './components/inforCard.vue';
 import mapDataTable from './components/mapDataTable.vue';
 import toDoListItem from './components/toDoListItem.vue';
+
+import myIDB from '../../assets/js/indexedDB'
 
 export default {
     name: 'home',
@@ -227,7 +229,8 @@ export default {
             },
             cityData: cityData,
             showAddNewTodo: false,
-            newToDoItemValue: ''
+            newToDoItemValue: '',
+	        receiptData: [],
         };
     },
     computed: {
@@ -255,7 +258,20 @@ export default {
         cancelAdd () {
             this.showAddNewTodo = false;
             this.newToDoItemValue = '';
-        }
+        },
+	    getReceiptData() {
+		    var receiptData = [];
+		    myIDB.storeObj.fetchStoreByCursor('room',res => {
+			    if(res.key && !res.key.includes('测试')) {
+				    if(res.key != '') {
+					    receiptData.unshift(res.value);
+				    }
+			    }
+			    else if(res == '游标结束'){
+				    this.receiptData = receiptData;
+			    }
+		    });
+	    },
     }
 };
 </script>

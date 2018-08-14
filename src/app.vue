@@ -5,6 +5,8 @@
 </template>
 
 <script>
+	import myIDB from './assets/js/indexedDB'
+
     export default {
         data () {
             return {
@@ -29,6 +31,7 @@ html,body{
     height: 100%;
     background: #f0f0f0;
     overflow: hidden;
+    font-family: "Helvetica Neue",Helvetica,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","微软雅黑",Arial,sans-serif;
 }
 .app-main{
     width: 100%;

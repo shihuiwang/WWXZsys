@@ -86,6 +86,16 @@ export const appRouter = [
             { path: 'history_receipt', title: '以前的收据', name: 'history_receipt', component: () => import('@/views/history-receipt/history-receipt.vue') }
         ]
     },
+	{
+		path: '/tenant_management',
+		icon: 'ios-people-outline',
+		name: 'tenant_management',
+		title: '租户管理',
+		component: Main,
+		children: [
+			{ path: 'tenant_list', title: '租户管理', name: 'tenant_list', component: () => import('@/views/tenant-manage/tenant-list.vue') }
+		]
+	},
     {
         path: '/access',
         icon: 'key',

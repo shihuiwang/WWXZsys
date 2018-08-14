@@ -155,7 +155,7 @@
 					res.currentWaterNumber = room[index].water;
 					res.actualDosage = res.currentPowerNumber - res.prePowerNumber;
 					res.waterActualDosage = res.currentWaterNumber - res.preWaterNumber;
-					res.powerFee = res.actualDosage*1.5;
+					res.powerFee = res.actualDosage*(res.powerKWH?res.powerKWH:1.5);
 					res.waterFee = res.waterActualDosage*5;
 					res.id = '20' + year + this.month + this.date + res.roomNumber;
 					res.year = year;

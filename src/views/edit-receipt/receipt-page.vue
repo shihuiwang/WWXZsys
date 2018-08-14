@@ -175,7 +175,7 @@ export default {
             this.prev.waterNumber = this.tenantInfo.preWaterNumber[this.tenantInfo.preWaterNumber.length-1];
 
             if(this.roomNum && this.tenantInfo == undefined) {
-                alert('没有该房间的数据');
+                this.$Message.warning('没有该房间的数据');
             }
             
             this.total = countTotal(this.tenantInfo.rent,this.tenantInfo.cost,this.tenantInfo.publicSaniFee,this.powerFee,this.waterFee).toFixed(2);
@@ -194,7 +194,7 @@ export default {
             count = 0;
         }
         this.actualDosage = count;
-        this.powerFee = count*this.factor;
+        this.powerFee = count*(this.tenantInfo.powerKWH?this.tenantInfo.powerKWH:this.factor);
         this.total = countTotal(this.tenantInfo.rent,this.tenantInfo.cost,this.tenantInfo.publicSaniFee,this.powerFee,this.waterFee).toFixed(2);
         this.totalStr = currency.convertCurrency(this.total);
         
@@ -216,16 +216,17 @@ export default {
         var prevWater = parseFloat(this.prev.waterNumber);
 
         if(currentPower == '' || !currentPower) {
-            return this.$toast('本月的电表读数不可以为空');
+            return this.$Message.warning('本月的电表读数不可以为空');
+
         }
         if(currentPower < prevPower) {
-            return this.$toast('本月的电表读数小于上月读数，改一下吧，不然就倒贴钱了');
+            return this.$Message.warning('本月的电表读数小于上月读数，改一下吧，不然就倒贴钱了');
         }
         if(currentWater == '' || !currentWater) {
-            return this.$toast('本月的水表读数不可以写空');
+            return this.$Message.warning('本月的水表读数不可以写空');
         }
         if(currentWater < prevWater) {
-            return this.$toast('本月的水表读数小于上月读数，改一下吧，不然就倒贴钱了');
+            return this.$Message.warning('本月的水表读数小于上月读数，改一下吧，不然就倒贴钱了');
         }
 
         //console.log(this.tenantInfo,currentPower);
@@ -234,15 +235,15 @@ export default {
         data.preWaterNumber.push(currentWater);
 
         myIDB.storeObj.put(data,(res) => {
-            console.log(res);
-            this.$toast("水电表读数更新好了");
+	        this.$Notice.success({title: '水电表读数更新好了', duration: 5});
         });
     },
     updateTenantData() {
         var data = Object.assign(this.tenantInfo);
         data.tenant = this.tenantInfo.tenant;
+        console.log(data);
         myIDB.storeObj.put(data,(res) => {
-            this.$toast("基本信息已经更新啦~");
+	        this.$Notice.success({title: '基本信息已经更新啦~', duration: 5});
         });
     },
     saveReceipt() {
@@ -267,8 +268,7 @@ export default {
             month: this.month
         }
         myIDB.storeObj.receiptAdd(receipt,(res) => {
-            console.log(res);
-            this.$toast("收据保存好了！暂时还不能查询");
+	        this.$Notice.success({title: '收据保存好了~'});
 
             //保存成功后更新水电读数
             var currentPower = parseFloat(this.currentPowerNumber);
@@ -277,16 +277,16 @@ export default {
             var prevWater = parseFloat(this.prev.waterNumber);
 
             if(currentPower == '' || !currentPower) {
-                return this.$toast('本月的电表读数不可以为空');
+                return this.$Message.warning('本月的电表读数不可以为空');
             }
             if(currentPower < prevPower) {
-                return this.$toast('本月的电表读数小于上月读数，改一下吧，不然就倒贴钱了');
+                return this.$Message.warning('本月的电表读数小于上月读数，改一下吧，不然就倒贴钱了');
             }
             if(currentWater == '' || !currentWater) {
-                return this.$toast('本月的水表读数不可以写空');
+                return this.$Message.warning('本月的水表读数不可以写空');
             }
             if(currentWater < prevWater) {
-                return this.$toast('本月的水表读数小于上月读数，改一下吧，不然就倒贴钱了');
+                return this.$Message.warning('本月的水表读数小于上月读数，改一下吧，不然就倒贴钱了');
             }
 
             //console.log(this.tenantInfo,currentPower);
@@ -295,8 +295,7 @@ export default {
             data.preWaterNumber.push(currentWater);
 
             myIDB.storeObj.put(data,(res) => {
-                console.log(res);
-                this.$toast("水电表读数也更新了，不用再点更新了");
+	            this.$Notice.success({title: '水电表读数也更新了，不用再点更新了', duration: 5});
             });
         });
     },
