@@ -31,68 +31,68 @@
 						title: '门牌号',
 						align: 'center',
 						key: 'roomNumber',
-						//width: 90,
+						width: 90,
 					},
 					{
 						title: '姓名',
 						align: 'center',
 						key: 'tenant',
-						//width: 150,
+						width: 100,
 						editable: true
 					},
 					{
 						title: '租金',
 						align: 'center',
 						key: 'rent',
-						width: 150,
+						width: 90,
 						editable: true
 					},
 					{
 						title: '月/网费',
 						align: 'center',
 						key: 'cost',
-						width: 150,
+						width: 90,
 						editable: true
 					},
 					{
 						title: '月/卫生费',
 						align: 'center',
 						key: 'publicSaniFee',
-						width: 150,
+						width: 100,
 						editable: true
 					},
 					{
 						title: '交租日期',
 						align: 'center',
 						key: 'payRentDay',
-						width: 150,
+						width: 100,
 						editable: true
 					},
 					{
 						title: '最近一次电表读数',
 						align: 'center',
 						key: 'prePowerRead',
-						width: 200,
+						width: 150,
 						editable: true
 					},
 					{
 						title: '1°电收费/元',
 						align: 'center',
 						key: 'powerKWH',
-						width: 100,
+						width: 110,
 						editable: true
 					},
 					{
 						title: '最近一次水表读数',
 						align: 'center',
 						key: 'preWaterRead',
-						width: 200,
+						width: 150,
 						editable: true
 					},
 					{
 						title: '操作',
 						align: 'center',
-						width: 150,
+						//width: 105,
 						key: 'handle',
 						handle: ['edit']
 					}
