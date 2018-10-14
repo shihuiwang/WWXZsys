@@ -141,18 +141,35 @@ var storeObj = {
             if(success) success(res);
         };
     },
-    fetchStoreByCursor(storeName,success){
+    fetchStoreByCursor(storeName,success,by){
         var transaction=db.transaction(storeName);
         var store=transaction.objectStore(storeName);
-        var request=store.openCursor();
+        var request=store.openCursor(null, 'prev');
         request.onsuccess=function(e){
             var cursor=e.target.result;
             if(cursor){
-                /*console.log(cursor.key);
-                var currentStudent=cursor.value;
-                console.log(currentStudent);*/
-                success(cursor);
-                cursor.continue();
+                var month = cursor.key.substring(4,6);
+                var date = new Date().getDate();
+                //by是上个月的月数，如果传入月数by则只拿by的20号以上的收据数据
+                if(by && month >= by ) {
+	                success(cursor);
+	                if(month == by && cursor.key.substring(6,8) > 20 && date < 10) {
+		                cursor.continue();
+                    }
+                    else if(month > by) {
+	                    cursor.continue();
+                    }
+                    else {
+		                success('游标结束');
+	                }
+                }
+                else if(!by) {
+	                success(cursor);
+	                cursor.continue();
+                }
+                else {
+	                success('游标结束');
+                }
             }
             if(!cursor){
                 success('游标结束');

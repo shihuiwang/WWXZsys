@@ -39,28 +39,17 @@
                         <Card>
                             <p slot="title" class="card-title">
                                 <Icon type="android-checkbox-outline"></Icon>
-                                待办事项
+                                未抄水电写收据的房间
                             </p>
-                            <a type="text" slot="extra" @click.prevent="addNewToDoItem">
-                                <Icon type="plus-round"></Icon>
-                            </a>
-                            <Modal
-                                v-model="showAddNewTodo"
-                                title="添加新的待办事项"
-                                @on-ok="addNew"
-                                @on-cancel="cancelAdd">
-                                <Row type="flex" justify="center">
-                                    <Input v-model="newToDoItemValue" icon="compose" placeholder="请输入..." style="width: 300px" />
-                                </Row>
-                                <Row slot="footer">
-                                    <Button type="text" @click="cancelAdd">取消</Button>
-                                    <Button type="primary" @click="addNew">确定</Button>
-                                </Row>
-                            </Modal>
+	                        <a class="copyBtn" type="text" slot="extra" @click.prevent="addNewToDoItem"> 复制 </a>
                             <div class="to-do-list-con">
-                                <div v-for="(item, index) in toDoList" :key="'todo-item' + (toDoList.length - index)" class="to-do-item">
-                                    <to-do-list-item :content="item.title"></to-do-list-item>
-                                </div>
+	                            <div class="to-do-list-item" v-for="(item, index) in unReceiptTenant" :key="item.roomNumber">
+		                            <span>{{item.roomNumber}}</span>
+		                            <span class="item-label">{{item.payRentDay}} 号</span>
+	                            </div>
+	                            <div id="copyTarget" style="display: none" ref="copyTarget">
+		                            <span v-for="(item, index) in unReceiptTenant">{{item.roomNumber}}/</span>
+	                            </div>
                             </div>
                         </Card>
                     </Col>
@@ -161,17 +150,6 @@
                 </Card>
             </Col>
         </Row>
-        <!--<Row class="margin-top-10">
-            <Card>
-                <p slot="title" class="card-title">
-                    <Icon type="ios-shuffle-strong"></Icon>
-                    上周每日服务调用量(万)
-                </p>
-                <div class="line-chart-con">
-                    <service-requests></service-requests>
-                </div>
-            </Card>
-        </Row>-->
     </div>
 </template>
 
@@ -185,9 +163,9 @@ import userFlow from './components/userFlow.vue';
 import countUp from './components/countUp.vue';
 import inforCard from './components/inforCard.vue';
 import mapDataTable from './components/mapDataTable.vue';
-import toDoListItem from './components/toDoListItem.vue';
 
 import myIDB from '../../assets/js/indexedDB'
+import Clipboard from 'clipboard';
 
 export default {
     name: 'home',
@@ -200,27 +178,9 @@ export default {
         countUp,
         inforCard,
         mapDataTable,
-        toDoListItem
     },
     data () {
         return {
-            toDoList: [
-                {
-                    title: '去iView官网学习完整的iView组件'
-                },
-                {
-                    title: '去iView官网学习完整的iView组件'
-                },
-                {
-                    title: '去iView官网学习完整的iView组件'
-                },
-                {
-                    title: '去iView官网学习完整的iView组件'
-                },
-                {
-                    title: '去iView官网学习完整的iView组件'
-                }
-            ],
             count: {
                 createUser: 496,
                 visit: 3264,
@@ -230,7 +190,8 @@ export default {
             cityData: cityData,
             showAddNewTodo: false,
             newToDoItemValue: '',
-	        receiptData: [],
+	        receiptedTenant: [],
+	        allTenants: [],
         };
     },
     computed: {
@@ -240,7 +201,14 @@ export default {
     },
     methods: {
         addNewToDoItem () {
-            this.showAddNewTodo = true;
+        	let _this = this;
+	        new Clipboard('.copyBtn', {
+		        text: function(trigger) {
+		        	return _this.unReceiptTenant.map(item => {
+		        		return item.roomNumber
+			        }).join('/');
+		        }
+	        });
         },
         addNew () {
             if (this.newToDoItemValue.length !== 0) {
@@ -260,18 +228,44 @@ export default {
             this.newToDoItemValue = '';
         },
 	    getReceiptData() {
-		    var receiptData = [];
+        	var prevMonth = new Date().getMonth() === 0?12:new Date().getMonth();
+		    var receiptedTenant = [];
 		    myIDB.storeObj.fetchStoreByCursor('room',res => {
 			    if(res.key && !res.key.includes('测试')) {
 				    if(res.key != '') {
-					    receiptData.unshift(res.value);
+					    receiptedTenant.unshift(res.value.id.substring(8,12));
 				    }
 			    }
 			    else if(res == '游标结束'){
-				    this.receiptData = receiptData;
+			    	//本月10号以前，已写收据的租户收据
+				    this.receiptedTenant = receiptedTenant;
+			    }
+		    },prevMonth);
+	    },
+	    getAllHouseData() {
+		    let allTenants = [];
+		    myIDB.storeObj.fetchStoreByCursor('HOUSE',res => {
+			    if(res.key) {
+				    allTenants.push(res.value)
+			    }
+			    else if(res == '游标结束'){
+				    this.allTenants = allTenants;
 			    }
 		    });
 	    },
-    }
+    },
+	computed: {
+		unReceiptTenant() {
+			return this.allTenants.filter( val => {
+				if(this.receiptedTenant.indexOf(val.roomNumber) === -1) {
+					return val
+				}
+			})
+		},
+	},
+    created() {
+    	this.getReceiptData();
+    	this.getAllHouseData();
+    },
 };
 </script>

@@ -20,6 +20,18 @@
 .to-do-list-con{
     height: 145px;
     overflow: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    .to-do-list-item {
+      margin-right: 15px;
+      display: flex;
+      flex-direction: column;
+      .item-label {
+        color: #999;
+        font-size: 11px;
+      }
+    }
 }
 .to-do-item{
     padding: 2px;

@@ -114,7 +114,7 @@ export default {
 	                    	res.value.tenant = res.value.tenant + '(已退)';
 	                    	res.value.stateColor = '#ed3f14';
 	                    }
-	                    receiptData.unshift(res.value);
+	                    receiptData.push(res.value);
 	                }
 	            }
 	            else if(res == '游标结束'){
