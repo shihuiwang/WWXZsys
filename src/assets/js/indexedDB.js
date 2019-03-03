@@ -17,7 +17,7 @@ if(!indexedDB) {
 }
 
 //第一个参数是数据库的名称，第二个参数是数据库的版本号。
-var request = indexedDB.open('wwxz', 8);
+var request = indexedDB.open('wwxz', 9);
 
 request.onerror = function(e) {
     console.log(e.currentTarget.error.message);
