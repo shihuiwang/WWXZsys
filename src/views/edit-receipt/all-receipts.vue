@@ -2,9 +2,11 @@
 	<Modal
 	v-model="viewModal"
 	width="1000px"
+	:closable="false"
+	:mask-closable="false"
 	title="填写所有房号和水电读数">
 		<div style="padding: 20px 0">
-			<div class="receipt-module" :id="'img' + item.id" v-for="item in allReceiptData">
+			<div class="receipt-module" :id="'img' + item.id" v-for="(item, index) in allReceiptData">
 				<img :src="require('../../assets/images/item-bgimg.png')" alt="" class="item-bgimg">
 				<div class="receipt-head">
 					<span class="title">公寓租金收据</span>
@@ -16,21 +18,21 @@
 				<div class="receipt-content">
 					<p style="padding-left: 40px;">
 						<span>今收到</span>
-						<span class="input-span">{{item.tenant}}</span>
+						<span class="input-span">{{item.tenant}}<input type="text" v-model="changeData.tenant" v-if="item.isEdit"></span>
 						<span>交来</span>
-						<span class="input-span">{{item.roomNumber}}</span>
+						<span class="input-span">{{item.roomNumber}}<input type="text" v-model="changeData.roomNumber" v-if="item.isEdit"></span>
 						<span>房(20</span>
-						<span class="input-span n2">{{year}}</span>
+						<span class="input-span n2">{{item.year || year}}<input type="text" v-model="changeData.year" v-if="item.isEdit"></span>
 						<span>年</span>
-						<span class="input-span n2">{{month}}</span>
+						<span class="input-span n2">{{item.month || month}}<input type="text" v-model="changeData.month" v-if="item.isEdit"></span>
 						<span>月</span>
-						<span class="input-span n2">{{item.payRentDay}}</span>
+						<span class="input-span n2">{{item.payRentDay}}<input type="text" v-model="changeData.payRentDay" v-if="item.isEdit"></span>
 						<span>日至20</span>
-						<span class="input-span n2">{{year}}</span>
+						<span class="input-span n2">{{item.year || year}}<input type="text" v-model="changeData.year" v-if="item.isEdit"></span>
 						<span>年</span>
-						<span class="input-span n2">{{month+1}}</span>
+						<span class="input-span n2">{{Number(item.month || month)+1}}</span>
 						<span>月</span>
-						<span class="input-span n2">{{item.payRentDay}}</span>
+						<span class="input-span n2">{{item.payRentDay}}<input type="text" v-model="changeData.payRentDay" v-if="item.isEdit"></span>
 						<span>日)</span>
 					</p>
 					<p>
@@ -87,11 +89,17 @@
 					<span>出纳：</span>
 					<span>经手人：王华桥</span>
 				</div>
+				<div style="position: absolute;top: 0;left: -50px;">
+					<Button size="small" @click="changeReceipt(item, index)">修改</Button>
+					<br>
+					<Button size="small" @click="comfirm(item, index)">确定</Button>
+				</div>
 		</div>
 
 		</div>
 		<div slot="footer">
-			<Button @click="saveImgcomfirm(0)" type="success">下载收据</Button>
+			<Button @click="saveImgcomfirm(0)" type="info">关闭</Button>
+			<Button @click="viewModal = false" type="success">下载收据</Button>
 		</div>
 	</Modal>
 </template>
@@ -135,13 +143,21 @@
 				countTotal,
 				currency,
 				tenantInfo: {},
+				changeData: {},
 			}
 		},
 		methods: {
 			show() {
 				this.viewModal = true;
 			},
-			comfirm() {
+			comfirm(item, index) {
+				Object.assign(item, this.changeData, {isEdit: false});
+				this.$set(this.allReceiptData, index, item);
+			},
+			changeReceipt(item, index) {
+				this.changeData = {};
+				item.isEdit = true
+				this.$set(this.allReceiptData, index, item);
 
 			},
 			getAllHouseData(room,index) {
@@ -305,6 +321,17 @@
 		border-bottom: 1px solid #000;
 		margin: 0 -4px;
 		background: rgba(255,255,255,0);
+		position: relative;
+
+	}
+	.receipt-content p .input-span input {
+		position: absolute;
+		left: 5px;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		width: 100%;
+		background-color: #fff;
 	}
 	.receipt-content p input.n2,
 	.receipt-content p .input-span.n2 {
