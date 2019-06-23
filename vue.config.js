@@ -1,7 +1,7 @@
 module.exports = {
 	lintOnSave: true,
 	productionSourceMap: false,
-	baseUrl: './',
+	publicPath: './',
 	devServer: {
 		port: 8082, // 端口号
 		host: 'localhost',
