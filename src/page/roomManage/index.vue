@@ -29,9 +29,21 @@
 	                        <el-table-column label="交租日" prop="payRentDay"></el-table-column>
 	                        <el-table-column label="月/网费" prop="cost"></el-table-column>
 	                        <el-table-column label="月/卫生费" prop="publicSaniFee"></el-table-column>
-	                        <el-table-column label="最近一次电表读数" prop="prePowerRead"></el-table-column>
-	                        <el-table-column label="1°电收费/元" prop="powerKWH"></el-table-column>
-	                        <el-table-column label="最近一次水表读数" prop="preWaterRead"></el-table-column>
+	                        <el-table-column label="最近一次电表读数" prop="prePowerRead">
+		                        <template slot-scope="scope">
+			                        {{scope.row.prePowerNumber ? scope.row.prePowerNumber[scope.row.prePowerNumber.length - 1] : ''}}
+		                        </template>
+	                        </el-table-column>
+	                        <el-table-column label="1°电收费/元" prop="powerKWH">
+		                        <template slot-scope="scope">
+			                        {{scope.row.powerKWH ? scope.row.powerKWH : 1.5}}
+		                        </template>
+	                        </el-table-column>
+	                        <el-table-column label="最近一次水表读数" prop="preWaterRead">
+		                        <template slot-scope="scope">
+			                        {{scope.row.preWaterNumber ? scope.row.preWaterNumber[scope.row.preWaterNumber.length - 1] : ''}}
+		                        </template>
+	                        </el-table-column>
 	                        <el-table-column
 			                        fixed="right"
 			                        label="操作">

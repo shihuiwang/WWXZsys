@@ -56,14 +56,14 @@
 					<div class="contract-header">
 						<div>合同</div>
 						<div class="btn-block">
-							<el-button style="margin-right: 20px" size="small" type="text">查看合同图片</el-button>
+							<el-button :disabled="!form.contractImgPath" @click="contractImgVisible=true" style="margin-right: 20px" size="small" type="text">查看合同图片</el-button>
 							<el-upload
 									:action="baseURL + '/upload'"
 									:on-remove="handleRemove"
 									:on-success="uploadContractSuccess"
 									auto-upload
-									:limit="1"
-									:file-list="fileList">
+									:show-file-list="false"
+									:limit="1">
 								<el-button size="small" type="text">上传/更新合同图片</el-button>
 							</el-upload>
 						</div>
@@ -220,6 +220,17 @@
 				</div>
 			</div>
 		</el-card>
+		<!--合同图片显示contractImgPath-->
+		<el-dialog
+				title="提示"
+				top="5vh"
+				:visible.sync="contractImgVisible"
+				width="800px" >
+			<div style="width: 100%; min-height: 78vh">
+				<!--<img :src="baseURL + form.contractImgPath" alt="" style="height: 100%">-->
+				<el-image :src="baseURL + form.contractImgPath"></el-image>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -253,6 +264,7 @@
 				type: 'edit',
 				id: null,
 				copyId: '',
+				contractImgVisible: false,
 			}
 		},
 		methods: {
@@ -270,6 +282,10 @@
 			save() {
 				this.form.prePowerNumber.push(this.form.prePowerRead);
 				this.form.preWaterNumber.push(this.form.preWaterRead);
+				this.form.prePowerNumber = Array.from(new Set(this.form.prePowerNumber));
+				this.form.preWaterNumber = Array.from(new Set(this.form.preWaterNumber));
+				delete this.form.prePowerRead;
+				delete this.form.preWaterRead;
 				this.loading = true;
 				this.$http.post('/updateRoomInfo', this.form).then(res => {
 					this.loading = false;
@@ -308,10 +324,12 @@
 				});
 			},
 			add() {
-				delete this.form["_id"];
 				this.form["id"] = this.form.roomNumber;
 				this.form.prePowerNumber.push(this.form.prePowerRead);
 				this.form.preWaterNumber.push(this.form.preWaterRead);
+				delete this.form["_id"];
+				delete this.form.prePowerRead;
+				delete this.form.preWaterRead;
 				this.$http.post('/insertRoom', this.form).then(res => {
 					this.loading = false;
 					if(res.code === 200) {
@@ -323,15 +341,14 @@
 			},
 			handleRemove() {},
 			uploadContractSuccess(res) {
-				this.form.contractImgPath = res.reallyPath;
+				this.$message.success('上传图片成功');
+				this.$set(this.form, 'contractImgPath', res.reallyPath);
 			},
 			uploadCardFrontSuccess(res) {
-				//this.form.cardFrontImgPath = res.reallyPath;
 				this.$set(this.form, 'cardFrontImgPath', res.reallyPath);
-				//console.log(this.form)
 			},
 			uploadCardBackSuccess(res) {
-				this.form.cardBackImgPath = res.reallyPath;
+				this.$set(this.form, 'cardBackImgPath', res.reallyPath);
 			},
 			copyRoom() {
 				this.id = this.copyId;
