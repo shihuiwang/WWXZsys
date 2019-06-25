@@ -7,9 +7,16 @@
                     <span style="margin-right: 30px"> 租户列表</span>
 	                <el-button size="small" type="text" @click="toggle(true)" :disabled="isList">列表</el-button>
 	                <el-button size="small" type="text" @click="toggle(false)" :disabled="!isList">月度收租日分布</el-button>
+	                <div class="rigth-block">
+		                <el-button size="small" type="primary" @click="edit({})">添加</el-button>
+	                </div>
                 </div>
 	            <div class="search-container" v-show="isList">
 		            <el-input v-model="form.roomNumber" placeholder="门牌号" clearable size="small"></el-input>
+		            <el-select v-model="form.status" placeholder="状态" size="small">
+			            <el-option label="正常" :value="1"></el-option>
+			            <el-option label="已退" :value="0"></el-option>
+		            </el-select>
 		            <el-button size="small" type="primary" @click="search">查询</el-button>
 	            </div>
                 <el-row v-show="isList">
@@ -31,6 +38,7 @@
 		                        <template slot-scope="scope">
 			                        <!--<el-button type="text" size="small">查看</el-button>-->
 			                        <el-button type="text" size="small" @click="edit(scope.row)">编辑</el-button>
+			                        <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
 		                        </template>
 	                        </el-table-column>
                         </el-table>
@@ -80,7 +88,9 @@ export default {
 	        page: 1,
 	        size: 10,
 	        total: 0,
-	        form: {},
+	        form: {
+		        status: 1,
+	        },
 	        isList: true,
 	        curMonth: 1
         };
@@ -106,7 +116,21 @@ export default {
 		    this.getRoomData();
 	    },
 	    edit(row) {
-        	this.$router.push({path: '/roomManage/roomEdit', query: {id: row.id}})
+        	this.$router.push({path: '/roomManage/roomEdit', query: {id: row.id, type: row.id ? 'edit' : 'add'}})
+	    },
+	    del(row) {
+		    this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+			    confirmButtonText: '确定',
+			    cancelButtonText: '取消',
+			    type: 'warning'
+		    }).then(() => {
+			    this.$http.post('/removeItem', {'_id': row["_id"]}).then(res => {
+				    if(res.code === 200) {
+					    this.$message.success('删除成功!');
+					    this.getRoomData();
+				    }
+			    })
+		    }).catch(() => {return false});
 	    },
 	    search() {
 		    if(!this.form.id) delete this.form.id;
@@ -158,5 +182,11 @@ export default {
 			border-left: 1px solid red;
 			border-right: 1px solid red;
 		}
+	}
+</style>
+
+<style lang="scss" scoped>
+	.rigth-block {
+		float: right;
 	}
 </style>

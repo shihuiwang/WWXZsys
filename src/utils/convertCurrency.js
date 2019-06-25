@@ -40,7 +40,7 @@ if (currencyDigits == "") {
   return "";  
 }  
 if (currencyDigits.match(/[^,.\d]/) != null) {  
-  alert("Invalid characters in the input string!可能有费用计算存在负数，注意点！");
+  //alert("Invalid characters in the input string!可能有费用计算存在负数，注意点！");
   return "";  
 }  
 if ((currencyDigits).match(/^((\d{1,3}(,\d{3})*(.((\d{3},)*\d{1,3}))?)|(\d+(.\d+)?))$/) == null) {  
