@@ -4,8 +4,9 @@
 	width="1000px"
 	:close-on-click-modal="false"
 	:close-on-press-escape="false"
+	:before-close="handleClose"
 	title="填写所有房号和水电读数">
-		<div style="padding: 20px 0">
+		<div id="receipt-container" style="padding: 20px 0">
 			<div class="receipt-module" :id="'img' + item.id" v-for="(item, index) in allReceiptData">
 				<img :src="require('../../assets/images/item-bgimg.png')" alt="" class="item-bgimg">
 				<div class="receipt-head">
@@ -100,7 +101,7 @@
 
 		</div>
 		<span slot="footer">
-			<el-button @click="viewModal = false" size="small">关闭</el-button>
+			<el-button @click="handleClose(()=>{viewModal = false})" size="small">关闭</el-button>
 			<el-button @click="saveReceipt(temReceiptData)" size="small" type="primary">一键保存所有收据</el-button>
 			<el-button @click="saveImgcomfirm(0)" size="small" type="success">下载收据</el-button>
 		</span>
@@ -109,7 +110,7 @@
 
 <script>
 	import currency from '../../utils/convertCurrency'
-	//import html2canvas from 'html2canvas'
+	import html2canvas from 'html2canvas'
 	let currentDate = new Date();//获取系统当前时间
 	let year = currentDate.getFullYear().toString().substring(2,4);
 	let countTotal = function(a,b,c,d,e) {
@@ -173,8 +174,8 @@
 					data.currentWaterNumber = room[index].water;
 					data.actualDosage = data.currentPowerNumber - data.prePowerNumber;
 					data.waterActualDosage = data.currentWaterNumber - data.preWaterNumber;
-					data.powerFee = data.actualDosage*(data.powerKWH?data.powerKWH:1.5);
-					data.waterFee = data.waterActualDosage*5;
+					data.powerFee = (data.actualDosage*(data.powerKWH?data.powerKWH:1.5)).toFixed(2);
+					data.waterFee = (data.waterActualDosage*5).toFixed(2);
 					data.id = '20' + year + this.month + this.date + data.roomNumber;
 					data.year = year;
 					data.month = this.month;
@@ -249,12 +250,13 @@
 			},
 			saveImgcomfirm(i) {
 				let list = this.allReceiptData;
-
 				html2canvas(document.querySelector(`#img${list[i].id}`)).then(canvas => {
 					var imgUri = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"); // 获取生成的图片的url 　
 					var saveLink = document.createElement( 'a');
-					saveLink.href =imgUri;
+					saveLink.href = imgUri;
+
 					saveLink.download = `${list[i].roomNumber}-${list[i].id}`;
+					saveLink.setAttribute('download', `${list[i].roomNumber}-${list[i].id}.png`);
 					saveLink.click();
 					setTimeout( () => {
 						i++
@@ -265,6 +267,18 @@
 					}, 100)
 				});
 
+			},
+			handleClose(done) {
+				if(this.temReceiptData.length > 0) {
+					const noSaveStr = this.temReceiptData.map(val => val.id).join('/');
+					this.$confirm(`还有收据没有保存到数据库，编号分别为：${noSaveStr}, 确认关? 确认则不会保存收据，水电数也不会更新！`)
+					.then(_ => {
+						done();
+					}).catch(_ => {});
+				}
+				else {
+					done()
+				}
 			},
 		},
 		mounted() {
@@ -278,7 +292,7 @@
 	}
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 	.redirect-page {
 		position: fixed;
 		top: 100px;
@@ -292,12 +306,12 @@
 		margin: 0;
 	}
 	.receipt-module {
-		width: 620px;
-		height: 360px;
+		width: 630px;
+		height: 340px;
 		color: #000;
 		margin-left: 110px;
 		box-sizing: border-box;
-		padding: 0 30px 10px 30px;
+		padding: 0 40px 20px 30px;
 		position: relative;
 		font-size: 14px;
 		margin-bottom: 25px;
@@ -339,10 +353,20 @@
 		color: #333;
 		text-align: center;
 		border: none;
-		border-bottom: 1px solid #000;
 		margin: 0 -1px;
 		background: rgba(255,255,255,0);
 		position: relative;
+		// 实现border-bottom，兼容html2canvas
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 1px;
+			background-color: #000;
+		}
 
 	}
 	.receipt-content p .input-span input {
@@ -371,8 +395,19 @@
 		display: inline-block;
 		letter-spacing:10px;
 		padding-left: 40px;
-		border-bottom: 1px solid #000;
 		width: 350px;
+		position: relative;
+		// 实现border-bottom，兼容html2canvas
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 1px;
+			background-color: #000;
+		}
 	}
 	.seal {
 		float: left;
@@ -387,7 +422,7 @@
 
 	.receipt-foot {
 		position: absolute;
-		bottom: 35px;
+		bottom: 15px;
 		display: flex;
 		justify-content: space-between;
 		width: 560px;
@@ -399,8 +434,19 @@
 		display: inline-block;
 		width: 100px;
 		height: 25px;
-		border-bottom: 1px solid #000;
 		text-align: center;
+		position: relative;
+		// 实现border-bottom，兼容html2canvas
+		&:after {
+			content: '';
+			display: block;
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 1px;
+			background-color: #000;
+		}
 	}
 	.redtips {
 		color: red !important;
