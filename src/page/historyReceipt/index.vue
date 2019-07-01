@@ -30,10 +30,10 @@
 	                        <el-table-column label="用电量" prop="actualDosage"></el-table-column>
 	                        <el-table-column label="用水量" prop="waterActualDosage"></el-table-column>
 	                        <el-table-column label="电费" prop="powerFee">
-		                        <template slot-scope="scope">{{scope.row.powerFee.toFixed(2)}}</template>
+		                        <template slot-scope="scope">{{Number(scope.row.powerFee).toFixed(2)}}</template>
 	                        </el-table-column>
 	                        <el-table-column label="水费" prop="waterFee">
-		                        <template slot-scope="scope">{{scope.row.waterFee.toFixed(2)}}</template>
+		                        <template slot-scope="scope">{{Number(scope.row.waterFee).toFixed(2)}}</template>
 	                        </el-table-column>
 	                        <el-table-column label="缴费" prop="total"></el-table-column>
                         </el-table>
