@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import './utils/filter';
 import cMenu from './components/cmenu'
 export default {
 	components: { cMenu }

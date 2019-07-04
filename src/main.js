@@ -4,7 +4,7 @@ import App from './App.vue'
 import { Button, Menu, Submenu, MenuItem, Dialog, Loading, Table,
 	TableColumn, Input, InputNumber, Card, Row, Col, Pagination,
 	Form, FormItem, Notification, Message, Upload, Image, MessageBox,
-	Select, Option } from 'element-ui'
+	Select, Option, DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { service } from './utils/request';
 
@@ -30,6 +30,7 @@ Vue.use(Upload);
 Vue.use(Image);
 Vue.use(Select);
 Vue.use(Option);
+Vue.use(DatePicker);
 Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
 Vue.prototype.$confirm = MessageBox.confirm;

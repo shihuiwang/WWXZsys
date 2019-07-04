@@ -27,8 +27,8 @@
 						<el-form-item label="月租金" prop="rent">
 							<el-input v-model="form.rent" size="small"></el-input>
 						</el-form-item>
-						<el-form-item label="租赁期限" prop="payRentDay">
-							<el-input v-model="form.payRentDay" size="small"></el-input>
+						<el-form-item label="租赁期限" prop="term">
+							<el-date-picker v-model="form.term" value-format="timestamp" type="daterange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" size="small" style="width: 100%"></el-date-picker>
 						</el-form-item>
 						<el-form-item label="交租日期" prop="payRentDay">
 							<el-input v-model="form.payRentDay" size="small"></el-input>
@@ -95,7 +95,7 @@
 								房租赁给乙方<span class="is-downline">居住</span>使用。居住人数不超过<span class="is-downline">4</span>人, 入住租客年龄不能超过60岁及不能饲养宠物。
 							</p>
 							<p>
-								二、租金结算方式: 房屋租赁共<span class="is-downline">6</span>个月, 从<span class="is-downline">2018年10月26日</span>至<span class="is-downline">2019年4月26日</span>,
+								二、租金结算方式: 房屋租赁共<span class="is-downline">6</span>个月, 从<span class="is-downline">{{form.term && form.term[0] | time('cn')}}</span>至<span class="is-downline">{{form.term && form.term[1] | time('cn')}}</span>,
 								租金为人民币<span class="is-downline">{{form.rent}}</span>元/月, <span class="is-downline">{{form.rent && currency.convertCurrency(form.rent)}}</span>(大写), 电费{{form.powerKWH || 1.5}}/度, 水费5元/立方, 网费
 								<span class="is-downline">{{form.cost}}</span>元/月, 卫生费以及楼梯灯等分摊费<span class="is-downline">{{form.publicSaniFee || '-'}}</span>元/月, 钥匙押金
 								<span class="is-downline">{{form.keyDeposit}}</span>元。交租日期为每月<span class="is-downline">{{form.payRentDay}}</span>号; 如乙方拖欠租金, 须支付滞纳金
@@ -180,7 +180,7 @@
 							</p>
 							<hr>
 							<p>附注: <span class="is-downline large"> </span></p>
-							<p>附：收到保证金<span class="is-downline">{{form.rent}}</span>元, <span class="is-downline">2019/06/24</span>至<span class="is-downline">2019/06/24</span>租金<span class="is-downline">{{form.rent}}</span>元，网费<span class="is-downline">{{form.cost}}</span>元,</p>
+							<p>附：收到保证金<span class="is-downline">{{form.rent}}</span>元, <span class="is-downline">{{form.term && form.term[0] | time('/')}}</span>至<span class="is-downline">{{(form.term && form.term[0] + 30*86400*1000) | time('/')}}</span>租金<span class="is-downline">{{form.rent}}</span>元，网费<span class="is-downline">{{form.cost}}</span>元,</p>
 							<p>卫生费<span class="is-downline">{{form.publicSaniFee}}</span>元，钥匙押金<span class="is-downline">{{form.keyDeposit}}</span>元，其他费用<span class="is-downline">-</span>元，
 								合计<span class="is-downline">{{form.rent*2 + form.cost*1 + form.publicSaniFee*1 + form.keyDeposit*1}}</span>元，大写:<span class="is-downline">{{currency.convertCurrency(form.rent*2 + form.cost*1 + form.publicSaniFee*1 + 100)}}</span>,</p>
 							<p>首月的电表底数为<span class="is-downline">{{form.firstPowerRead}}</span>度, 首月的水表底数为<span class="is-downline">{{form.firstWaterRead}}</span>吨。</p>
