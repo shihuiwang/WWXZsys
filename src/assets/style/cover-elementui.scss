@@ -1,0 +1,22 @@
+.el-table .el-table__body-wrapper tr, .el-table .el-table__fixed-body-wrapper tr {
+  height: 48px;
+}
+.page-content {
+  padding: 20px 10px;
+  .el-card {
+  }
+  .el-card__body {
+    overflow-y: scroll;
+    min-height: calc(100vh - 175px);
+    &::-webkit-scrollbar {
+      display:none
+    }
+  }
+}
+.search-container {
+  margin-bottom: 10px;
+  .el-input {
+    width: 200px;
+    margin-right: 10px
+  }
+}

@@ -42,16 +42,16 @@
 						<el-form-item label="钥匙押金" prop="keyDeposit">
 							<el-input v-model="form.keyDeposit" size="small"></el-input>
 						</el-form-item>
-						<el-form-item label="首月电表读数" prop="prePowerRead">
+						<el-form-item label="首月电表读数" prop="firstPowerRead">
 							<el-input v-model="form.firstPowerRead" size="small" placeholder="只作记录用"></el-input>
 						</el-form-item>
-						<el-form-item label="首月水表读数" prop="prePowerRead">
+						<el-form-item label="首月水表读数" prop="firstWaterRead">
 							<el-input v-model="form.firstWaterRead" size="small" placeholder="只作记录用"></el-input>
 						</el-form-item>
 						<el-form-item label="最新电表读数" prop="prePowerRead">
 							<el-input v-model="form.prePowerRead" size="small" placeholder="作记录和计算用必填"></el-input>
 						</el-form-item>
-						<el-form-item label="最新水表读数" prop="prePowerRead">
+						<el-form-item label="最新水表读数" prop="preWaterRead">
 							<el-input v-model="form.preWaterRead" size="small" placeholder="作记录和计算用必填"></el-input>
 						</el-form-item>
 						<el-form-item>
@@ -254,6 +254,8 @@
 			return {
 				form: {
 					keyDeposit: 100,
+					prePowerRead: null,
+					preWaterRead: null,
 					prePowerNumber: [],
 					preWaterNumber: [],
 				},
@@ -282,8 +284,8 @@
 					//成功获取数据库数据
 					if(res.code === 200 && res.data) {
 						this.form = res.data;
-						this.form.prePowerRead = this.form.prePowerNumber[this.form.prePowerNumber.length - 1];
-						this.form.preWaterRead = this.form.preWaterNumber[this.form.preWaterNumber.length - 1];
+						this.$set(this.form, 'prePowerRead', res.data.prePowerNumber[res.data.prePowerNumber.length - 1]);
+						this.$set(this.form, 'preWaterRead', res.data.preWaterNumber[res.data.preWaterNumber.length - 1]);
 						this.letter = res.data.roomNumber.substring(0,1)
 					}
 				})
@@ -367,6 +369,8 @@
 		created() {
 			this.form = {
 				keyDeposit: 100,
+				prePowerRead: null,
+				preWaterRead: null,
 				prePowerNumber: [],
 				preWaterNumber: [],
 			};
