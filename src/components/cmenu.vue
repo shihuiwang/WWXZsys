@@ -2,7 +2,7 @@
 	<el-menu :default-active="activeIndex" background-color="#545c64"
 	         text-color="#fff" active-text-color="#409EFF"
 	         class="el-menu-demo" mode="horizontal" @select="handleSelect">
-		<el-menu-item index="/">首页</el-menu-item>
+		<el-menu-item index="/">财务看板</el-menu-item>
 		<el-menu-item index="newReceipt">填写收据</el-menu-item>
 		<el-menu-item index="history">历史收据</el-menu-item>
 		<el-menu-item index="roomManage">租户管理</el-menu-item>

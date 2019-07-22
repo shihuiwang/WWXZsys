@@ -176,9 +176,13 @@
 					data.waterActualDosage = data.currentWaterNumber - data.preWaterNumber;
 					data.powerFee = (data.actualDosage*(data.powerKWH?data.powerKWH:1.5)).toFixed(2);
 					data.waterFee = (data.waterActualDosage*5).toFixed(2);
-					data.id = '20' + year + this.month + this.date + data.roomNumber;
+
+					let month = this.month < 10 ? ('0' + this.month) : (this.month);
+					let date = this.date < 10 ? ('0' + this.date) : (this.date);
+					data.id = '20' + year + month + date + data.roomNumber;
+
 					data.year = year;
-					data.month = this.month;
+					data.month = month;
 					data.total = countTotal(data.rent, data.cost, data.publicSaniFee, data.powerFee, data.waterFee).toFixed(2);
 					data.tenant = data.tenant?data.tenant:'';
 					this.allReceiptData[index] = data;
