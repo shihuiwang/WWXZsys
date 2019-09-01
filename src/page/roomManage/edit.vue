@@ -54,6 +54,9 @@
 						<el-form-item label="最新水表读数" prop="preWaterRead">
 							<el-input v-model="form.preWaterRead" size="small" placeholder="作记录和计算用必填"></el-input>
 						</el-form-item>
+						<el-form-item label="每度电收费" prop="powerKWH">
+							<el-input v-model="form.powerKWH" size="small" placeholder="计算电费用留空则为1.5"></el-input>
+						</el-form-item>
 						<el-form-item>
 							<el-button class="large-btn" size="small" @click="$router.go(-1)">返回</el-button>
 							<el-button class="large-btn" type="primary" size="small" @click="save" :loading="loading" v-if="type === 'edit'">保存</el-button>
@@ -258,6 +261,7 @@
 					preWaterRead: null,
 					prePowerNumber: [],
 					preWaterNumber: [],
+          powerKWH: null
 				},
 				rules: {},
 				loading: false,

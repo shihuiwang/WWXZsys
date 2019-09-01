@@ -2,32 +2,38 @@
 	<div class="home-container">
 		<ul class="month-tab">
 			<li>{{currentYear}}</li>
-			<li v-for="index in 12" :key="index" @click="changeMonth(index)" :class="{active: index === currentMonth}">
+			<li v-for="index in 12" :key="index" @click="changeMonth(index)" :class="{active: ('0' + index) === currentMonth}">
 				<el-button type="text" :disabled="index > new Date().getMonth() + 1">{{index}}月</el-button>
 			</li>
 		</ul>
-		<el-card class="box-card" v-for="(num, index) in Object.keys(build)" :key="index">
-			<div slot="header" class="clearfix">
-				<span>{{num}}</span>
-			</div>
-			<div class="card-content">
-				<div class="mini-card">
-					<span class="right">收入</span>
-					<span class="left">123</span>
-				</div>
-				<div class="mini-card out">
-					<span class="right">支出</span>
-					<span class="left">{{build[num]}}</span>
-				</div>
-				<div class="mini-card sur">
-					<span class="right">剩余</span>
-					<span class="left">111</span>
-				</div>
-				<div class="mini-card total" v-if="num === 'E'">
-					<span class="right">剩余汇总</span>
-					<span class="left">333</span>
-				</div>
-			</div>
+		<!--<el-card class="box-card" v-for="(num, index) in Object.keys(build)" :key="index">-->
+		<el-card class="box-card">
+			<el-table ref="tableData" show-summary :data="tableData" style="width: 100%">
+        <el-table-column type="expand">
+          <template slot-scope="props">
+            <div class="expand-box">
+              <div>租金收入: <span>{{props.row.rent_in}}</span> </div>
+              <div>电费收入: <span>{{props.row.powerFee_in}}</span> </div>
+              <div>水费收入: <span>{{props.row.waterFee_in}}</span> </div>
+              <div>网费收入: <span>{{props.row.cost_in}}</span> </div>
+              <div>卫生费收入: <span>{{props.row.publicSaniFee_in}}</span> </div>
+            </div>
+          </template>
+        </el-table-column>
+				<el-table-column prop="build" label="楼栋"></el-table-column>
+				<el-table-column prop="_in" label="收入">
+					<template slot-scope="scope">
+						{{scope.row._in}}
+					</template>
+				</el-table-column>
+				<el-table-column prop="out" label="支出">
+          <template  slot-scope="scope">{{build[scope.row.build]}}</template>
+        </el-table-column>
+				<el-table-column prop="total" label="盈余">
+          <template  slot-scope="scope">{{scope.row._in - build[scope.row.build]}}</template>
+        </el-table-column>
+
+			</el-table>
 		</el-card>
 	</div>
 </template>
@@ -37,14 +43,65 @@
 		name: "home",
 		data() {
 			return {
+                tableData: [{
+                    build: 'A',
+                    out: 0,
+                    _in: 0,
+                    rent_in: 0,
+                    powerFee_in: 0,
+                    waterFee_in: 0,
+                    cost_in: 0,
+                    publicSaniFee_in: 0,
+                    total: 0,
+                }, {
+                    build: 'B',
+                    out: 0,
+                    _in: 2234,
+                    rent_in: 0,
+                    powerFee_in: 0,
+                    waterFee_in: 0,
+                    cost_in: 0,
+                    publicSaniFee_in: 0,
+                    total: 0
+                }, {
+                    build: 'C',
+                    out: 0,
+                    _in: 0,
+                    rent_in: 0,
+                    powerFee_in: 0,
+                    waterFee_in: 0,
+                    cost_in: 0,
+                    publicSaniFee_in: 0,
+                    total: 0
+                }, {
+                    build: 'D',
+                    out: 0,
+                    _in: 0,
+                    rent_in: 0,
+                    powerFee_in: 0,
+                    waterFee_in: 0,
+                    cost_in: 0,
+                    publicSaniFee_in: 0,
+                    total: 0
+                },{
+                    build: 'E',
+                    out: 0,
+                    _in: 0,
+                    rent_in: 0,
+                    powerFee_in: 0,
+                    waterFee_in: 0,
+                    cost_in: 0,
+                    publicSaniFee_in: 0,
+                    total: 0
+                }],
 				build: {
 					A: '4000',
-					B: '4000',
-					C: '4000',
-					D: '4000',
-					E: '4000',
+					B: '5200',
+					C: '8800',
+					D: '6000',
+					E: '2750',
 				},
-				currentMonth: new Date().getMonth() + 1,
+				currentMonth: (new Date().getMonth() + 1) < 10 ? ('0' + (new Date().getMonth() + 1)) : ((new Date().getMonth() + 1)),
 				currentYear: new Date().getFullYear()
 			}
 		},
@@ -53,6 +110,7 @@
 				if(month > new Date().getMonth() + 1) return false
 				month = month < 10 ? ('0' + month) : (month);
 				this.currentMonth = month;
+				console.log(month)
 				this.get();
 			},
 			get() {
@@ -64,7 +122,22 @@
 				}).then(res => {
 					this.loading = false;
 					if(res.code === 200) {
-						console.log(res.data)
+            Object.keys(this.build).map(val => {
+              this.tableData.map(value => {
+                if(value.build === val) {
+                  const data = res.data.filter(_val => _val.roomNumber.substring(0,1) === val);
+                  this.$set(value, 'data', data);
+                  data.map(sum => {
+                    value._in = parseInt(value._in) + parseInt(sum.total);
+                    value.rent_in = parseInt(value.rent_in) + parseInt(sum.rent);
+                    value.powerFee_in = parseInt(value.powerFee_in) + parseInt(sum.powerFee);
+                    value.waterFee_in = parseInt(value.waterFee_in) + parseInt(sum.waterFee);
+                    value.publicSaniFee_in = parseInt(value.publicSaniFee_in) + parseInt(sum.publicSaniFee);
+                    value.cost_in = parseInt(value.cost_in) + parseInt(sum.cost);
+                  });
+                }
+              })
+            })
 					}
 					if(!res.code) return Message.error(res.msg);
 				});
@@ -162,6 +235,9 @@
 		.el-card__header {
 			padding: 10px 20px;
 		}
+    .expand-box {
+      line-height: 30px;
+    }
 	}
 </style>
 

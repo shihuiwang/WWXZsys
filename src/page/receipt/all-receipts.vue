@@ -136,7 +136,7 @@
 					backgroundSize: "100% 100%",
 				},
 				receiptId: '', //收据ID
-				tenantInfo: {},
+				tenantInfo: [],
 				year: year,
 				month: currentDate.getMonth()+1,
 				date: currentDate.getDate(),
@@ -145,7 +145,6 @@
 				allReceiptData: [],
 				countTotal,
 				currency,
-				tenantInfo: {},
 				changeData: {},
 				temReceiptData: [],
 			}
@@ -166,7 +165,7 @@
 			},
 			getAllHouseData(room,index) {
 				this.$http.get(`/getRoomById?id=${room[index].name}`).then((res) => {
-					this.tenantInfo = Object.assign({}, res.data);
+					this.tenantInfo[index] = Object.assign({}, res.data);
 					const data = res.data;
 					data.prePowerNumber = data.prePowerNumber[data.prePowerNumber.length-1];
 					data.preWaterNumber = data.preWaterNumber[data.preWaterNumber.length-1];
@@ -235,7 +234,7 @@
 					this.$message.warning('存在一条水费为负数的收据，注意查看及时修改！');
 				}
 
-				var data = Object.assign(this.tenantInfo);
+				var data = Object.assign({}, this.tenantInfo.shift());
 				data.prePowerNumber.push(currentPower);
 				data.preWaterNumber.push(currentWater);
 
@@ -365,7 +364,7 @@
 			content: '';
 			display: block;
 			position: absolute;
-			bottom: 0;
+			bottom: -1px;
 			left: 0;
 			width: 100%;
 			height: 1px;
@@ -445,7 +444,7 @@
 			content: '';
 			display: block;
 			position: absolute;
-			bottom: 0;
+			bottom: -2px;
 			left: 0;
 			width: 100%;
 			height: 1px;

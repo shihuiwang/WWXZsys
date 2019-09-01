@@ -36,6 +36,11 @@
 		                        <template slot-scope="scope">{{Number(scope.row.waterFee).toFixed(2)}}</template>
 	                        </el-table-column>
 	                        <el-table-column label="缴费" prop="total"></el-table-column>
+                          <el-table-column fixed="right" label="操作">
+                            <template slot-scope="scope">
+                              <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+                            </template>
+                          </el-table-column>
                         </el-table>
                     </el-col>
                 </el-row>
@@ -93,7 +98,21 @@ export default {
         	if(!this.form.id) delete this.form.id;
         	if(!this.form.roomNumber) delete this.form.roomNumber;
 		    this.getReceiptData();
-	    }
+	    },
+      del(row) {
+        this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post('/removeItem', {'_id': row["_id"]}).then(res => {
+            if(res.code === 200) {
+              this.$message.success('删除成功!');
+              this.getReceiptData();
+            }
+          })
+        }).catch(() => {return false});
+      }
     },
     created() {
 	    this.getReceiptData();
