@@ -31,9 +31,9 @@
 						<span>日至20</span>
 						<span class="input-span n2">{{item.year || year}}<input type="text" v-model="changeData.year" v-if="item.isEdit"></span>
 						<span>年</span>
-						<span class="input-span n2">{{Number(item.month || month)+1}}</span>
+						<span class="input-span n2">{{item.month || month}}</span>
 						<span>月</span>
-						<span class="input-span n2">{{item.payRentDay}}<input type="text" v-model="changeData.payRentDay" v-if="item.isEdit"></span>
+						<span class="input-span n2">{{lastDay}}<input type="text" v-model="changeData.payRentDay" v-if="item.isEdit"></span>
 						<span>日)</span>
 					</p>
 					<p>
@@ -147,6 +147,7 @@
 				currency,
 				changeData: {},
 				temReceiptData: [],
+        lastDay: 31,
 			}
 		},
 		methods: {
@@ -290,6 +291,11 @@
 				let list = arg.data;
 				let i = 0;
 				this.getAllHouseData(list,i);
+        const date= new Date();
+        date.setMonth(date.getMonth() + 1);
+        //日期设置为0号, 0表示1号的前一天
+        let lastDay = date.setDate(0);
+        this.lastDay = new Date(lastDay).toLocaleString().split(' ')[0].slice(-2)
 			})
 		}
 	}

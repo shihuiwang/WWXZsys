@@ -2,7 +2,7 @@
 	<div class="home-container">
 		<ul class="month-tab">
 			<li>{{currentYear}}</li>
-			<li v-for="index in 12" :key="index" @click="changeMonth(index)" :class="{active: ('0' + index) === currentMonth}">
+			<li v-for="index in 12" :key="index" @click="changeMonth(index)" :class="{active: (index < 10 ? '0' + index : index) === currentMonth}">
 				<el-button type="text" :disabled="index > new Date().getMonth() + 1">{{index}}月</el-button>
 			</li>
 		</ul>
@@ -39,68 +39,28 @@
 </template>
 
 <script>
+  const obj = {
+    out: 0,
+    _in: 0,
+    rent_in: 0,
+    powerFee_in: 0,
+    waterFee_in: 0,
+    cost_in: 0,
+    publicSaniFee_in: 0,
+    total: 0
+  }
 	export default {
 		name: "home",
 		data() {
 			return {
-                tableData: [{
-                    build: 'A',
-                    out: 0,
-                    _in: 0,
-                    rent_in: 0,
-                    powerFee_in: 0,
-                    waterFee_in: 0,
-                    cost_in: 0,
-                    publicSaniFee_in: 0,
-                    total: 0,
-                }, {
-                    build: 'B',
-                    out: 0,
-                    _in: 2234,
-                    rent_in: 0,
-                    powerFee_in: 0,
-                    waterFee_in: 0,
-                    cost_in: 0,
-                    publicSaniFee_in: 0,
-                    total: 0
-                }, {
-                    build: 'C',
-                    out: 0,
-                    _in: 0,
-                    rent_in: 0,
-                    powerFee_in: 0,
-                    waterFee_in: 0,
-                    cost_in: 0,
-                    publicSaniFee_in: 0,
-                    total: 0
-                }, {
-                    build: 'D',
-                    out: 0,
-                    _in: 0,
-                    rent_in: 0,
-                    powerFee_in: 0,
-                    waterFee_in: 0,
-                    cost_in: 0,
-                    publicSaniFee_in: 0,
-                    total: 0
-                },{
-                    build: 'E',
-                    out: 0,
-                    _in: 0,
-                    rent_in: 0,
-                    powerFee_in: 0,
-                    waterFee_in: 0,
-                    cost_in: 0,
-                    publicSaniFee_in: 0,
-                    total: 0
-                }],
-				build: {
-					A: '4000',
-					B: '5200',
-					C: '8800',
-					D: '6000',
-					E: '2750',
-				},
+        tableData: [
+          { build: 'A', ...obj },
+          { build: 'B', ...obj },
+          { build: 'C', ...obj },
+          { build: 'D', ...obj },
+          { build: 'E', ...obj }
+        ],
+				build: { A: '4000', B: '5200', C: '8800', D: '6000', E: '2750' },
 				currentMonth: (new Date().getMonth() + 1) < 10 ? ('0' + (new Date().getMonth() + 1)) : ((new Date().getMonth() + 1)),
 				currentYear: new Date().getFullYear()
 			}
@@ -110,7 +70,6 @@
 				if(month > new Date().getMonth() + 1) return false
 				month = month < 10 ? ('0' + month) : (month);
 				this.currentMonth = month;
-				console.log(month)
 				this.get();
 			},
 			get() {
@@ -118,12 +77,14 @@
 				this.$http.post('/historyReceipt/list', {
 					page: 1,
 					size: 100,
-					id: `${this.currentYear}${this.currentMonth}`
+					id: `${this.currentYear}${this.currentMonth}`,
+          status: 1
 				}).then(res => {
 					this.loading = false;
 					if(res.code === 200) {
             Object.keys(this.build).map(val => {
               this.tableData.map(value => {
+                // value = { build: value.build, ...obj }
                 if(value.build === val) {
                   const data = res.data.filter(_val => _val.roomNumber.substring(0,1) === val);
                   this.$set(value, 'data', data);

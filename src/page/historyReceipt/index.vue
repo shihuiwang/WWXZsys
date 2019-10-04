@@ -80,7 +80,8 @@ export default {
 	        this.$http.post('/historyReceipt/list', {
 	        	page: this.page,
 		        size: this.size,
-		        ...this.form
+		        ...this.form,
+            status: 1,
 	        }).then(res => {
 		        this.loading = false;
 		        if(res.code === 200) {
@@ -100,18 +101,46 @@ export default {
 		    this.getReceiptData();
 	    },
       del(row) {
-        this.$confirm('此操作将永久删除该数据, 是否继续?', '提示', {
+        this.$confirm('此操作将软删除该数据不再显示, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http.post('/removeItem', {'_id': row["_id"]}).then(res => {
+          row.status = 0
+          this.$http.post('/removeHistory', row).then(res => {
             if(res.code === 200) {
               this.$message.success('删除成功!');
+              //this.getRoomNum(row)
               this.getReceiptData();
             }
-          })
+            if(!res.code) return this.$message.error(res.msg);
+          });
         }).catch(() => {return false});
+      },
+      // 回滚水电读数
+      rebackPW(rowData, tenantInfo) {
+        var data = Object.assign({}, tenantInfo);
+        data.prePowerNumber.push(rowData.prePowerNumber);
+        data.preWaterNumber.push(rowData.preWaterNumber);
+
+        this.$http.post('/updateRoomInfo', data).then(res => {
+          if(res.code === 200) {
+            this.$notify.info({
+              title: '消息',
+              message: '水电表读数已回滚~'
+            });
+          }
+        });
+      },
+      getRoomNum(row) {
+        this.loading = true;
+        this.$http.get(`/getRoomById?id=${row.roomNumber}`).then((res) => {
+          //成功获取数据库数据
+          if(res.code === 200) {
+            this.rebackPW(row, res.data)
+          }
+          this.loading = false;
+        })
       }
     },
     created() {
