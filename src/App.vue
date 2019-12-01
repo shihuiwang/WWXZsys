@@ -18,5 +18,6 @@ export default {
 @import "./assets/style/cover-elementui.scss";
 #app {
 	height: 100%;
+  overflow-y: scroll;
 }
 </style>
