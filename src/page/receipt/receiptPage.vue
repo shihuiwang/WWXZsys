@@ -277,7 +277,7 @@ export default {
 	    this.$refs.fillHydropowerReads.$emit('show')
 	},
 	makeReceipts(data) {
-	    this.$refs.receipts.$emit('showReceipts',{data})
+	    this.$refs.receipts.$emit('showReceipts',{data: data.data, startData: data.startData})
 	},
 	},
     directives: {

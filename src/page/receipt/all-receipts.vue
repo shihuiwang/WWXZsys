@@ -7,7 +7,7 @@
 	:before-close="handleClose"
 	title="填写所有房号和水电读数">
 		<div id="receipt-container" style="padding: 20px 0">
-			<div class="receipt-module" :id="'img' + item.id" v-for="(item, index) in allReceiptData">
+			<div class="receipt-module" :id="'img' + item.id" v-for="(item, index) in allReceiptData" :key="index">
 				<img :src="require('../../assets/images/item-bgimg.png')" alt="" class="item-bgimg">
 				<div class="receipt-head">
 					<span class="title">公寓租金收据</span>
@@ -181,7 +181,7 @@
 					let date = this.date < 10 ? ('0' + this.date) : (this.date);
 					data.id = '20' + year + month + date + data.roomNumber;
 
-					data.year = year;
+					data.year = this.year;
 					data.month = month;
 					data.total = countTotal(data.rent, data.cost, data.publicSaniFee, data.powerFee, data.waterFee).toFixed(2);
 					data.tenant = data.tenant?data.tenant:'';
@@ -287,15 +287,19 @@
 		},
 		mounted() {
 			this.$on('showReceipts', arg => {
+				if(arg.startData) {
+					this.month = new Date(arg.startData).getMonth() + 1
+					this.year = new Date(arg.startData).getFullYear().toString().substring(2,4);
+				}
 				this.temReceiptData = [];
 				let list = arg.data;
 				let i = 0;
 				this.getAllHouseData(list,i);
-        const date= new Date();
-        date.setMonth(date.getMonth() + 1);
-        //日期设置为0号, 0表示1号的前一天
-        let lastDay = date.setDate(0);
-        this.lastDay = new Date(lastDay).toLocaleString().split(' ')[0].slice(-2)
+				const date= new Date();
+				date.setMonth(date.getMonth() + 1);
+				//日期设置为0号, 0表示1号的前一天
+				let lastDay = date.setDate(0);
+				this.lastDay = new Date(lastDay).toLocaleString().split(' ')[0].slice(-2)
 			})
 		}
 	}
