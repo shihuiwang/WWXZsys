@@ -13,7 +13,7 @@
 					<span class="title">公寓租金收据</span>
 					<div class="receipt-number-date">
 						<p class="number">No {{item.id}}</p>
-						<p class="date">20{{year}}年{{month}}月{{date}}日</p> 
+						<p class="date">20{{year}}年{{month - 1}}月{{date}}日</p> 
 					</div>
 				</div>
 				<div class="receipt-content">
